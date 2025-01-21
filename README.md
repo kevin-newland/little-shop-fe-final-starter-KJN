@@ -2,7 +2,7 @@
 # FE - Little Shop final   
 
 Link to my GitHub.
-https://github.com/kevin-newland/little-shop-fe-final-starter-KJN
+https://github.com/kevin-newland
 ### Abstract:
 In this Front End repository I have added the functionality of displaying the coupons for a given merchant.
 
