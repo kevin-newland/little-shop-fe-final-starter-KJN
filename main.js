@@ -37,6 +37,7 @@ submitMerchantButton.addEventListener('click', (event) => {
 let merchants;
 let items;
 
+
 //Page load data fetching
 Promise.all([fetchData('merchants'), fetchData('items')])
 .then(responses => {
@@ -143,7 +144,7 @@ function showMerchantsView() {
   addRemoveActiveNav(merchantsNavButton, itemsNavButton)
   addNewButton.dataset.state = 'merchant'
   show([merchantsView, addNewButton])
-  hide([itemsView])
+  hide([itemsView, couponsView])
   displayMerchants(merchants)
 }
 
@@ -236,7 +237,7 @@ function getMerchantCoupons(event) {
   let merchantId = event.target.closest("article").id.split('-')[1]
   console.log("Merchant ID:", merchantId)
 
-  fetchData(`merchants/${merchantId}`)
+  fetchData(`merchants/${merchantId}/coupons`)
   .then(couponData => {
     console.log("Coupon data from fetch:", couponData)
     displayMerchantCoupons(couponData);
@@ -244,12 +245,27 @@ function getMerchantCoupons(event) {
 }
 
 function displayMerchantCoupons(coupons) {
+  couponsView.innerHTML = ''
+  showingText.innerText = ''
   show([couponsView])
-  hide([merchantsView, itemsView])
-
-  couponsView.innerHTML = `
-    <p>Coupon data will go here.</p>
-  `
+  hide([merchantsView, itemsView, addNewButton])
+  let merchantId = findMerchant(coupons.data[0].attributes.merchant_id)
+  console.log(merchantId)
+  showingText.innerText = `All Coupons for Merchant #${merchantId.id}`
+  coupons.data.forEach((coupon) => {
+    let merchant = findMerchant(coupon.attributes.merchant_id).attributes.name
+    couponsView.innerHTML += `
+      <article class="coupon" id="coupon-${coupon.id}">
+          <h2>${coupon.attributes.name}</h2>
+          <p> Unique code: ${coupon.attributes.unique_code}</p>
+          <p> Percent off: ${coupon.attributes.percent_off}</p>
+          <p> Dollar off: ${coupon.attributes.dollar_off}</p>
+          <p> Active: ${coupon.attributes.active}</p>
+          <p> Merchant id: ${coupon.attributes.merchant_id}</p>
+          <p class="merchant-name-in-coupon">Merchant: ${merchant}</p>
+        </article>
+      `
+  })
 }
 
 //Helper Functions
